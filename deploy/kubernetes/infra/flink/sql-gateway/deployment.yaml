@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: sql-gateway
+  name: sql-gateway
+spec:
+  selector:
+    matchLabels:
+      app: sql-gateway
+  template:
+    metadata:
+      labels:
+        app: sql-gateway
+    spec:
+      containers:
+        - args:
+            - start-foreground
+            - -Dsql-gateway.endpoint.rest.address=sql-gateway.flink
+            - -Djobmanager.rpc.address=session-cluster.flink
+            - -Drest.address=session-cluster-rest.flink
+          command:
+            - ./bin/sql-gateway.sh
+          image: flink:1.17
+          name: sql-gateway
+          ports:
+            - containerPort: 8083
+              name: rest
+              protocol: TCP
+          resources:
+            limits:
+              cpu: "1"
+              memory: 2Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+      serviceAccount: flink
+      serviceAccountName: flink

@@ -1,0 +1,7 @@
+statefulset:
+  replicas: 1
+storage:
+  persistentVolume:
+    enabled: false
+tls:
+  enabled: false
