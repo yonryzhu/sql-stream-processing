@@ -1,5 +1,6 @@
 load("ext://cert_manager", "deploy_cert_manager")
 load("ext://helm_resource", "helm_resource", "helm_repo")
+load("ext://namespace", "namespace_create", "namespace_inject")
 
 deploy_cert_manager(load_to_kind=True)
 
@@ -36,4 +37,21 @@ k8s_resource(
     "sql-gateway",
     port_forwards=[port_forward(8083, 8083, name="api")],
     labels="flink"
+)
+
+helm_resource(
+    "helm-release-postgresql",
+    release_name="postgresql",
+    namespace="hive",
+    chart="oci://registry-1.docker.io/bitnamicharts/postgresql",
+    flags=["--create-namespace", "-f", "deploy/kubernetes/infra/hive/postgresql/values.yaml"],
+    labels="hive",
+)
+
+k8s_yaml(namespace_inject(kustomize("deploy/kubernetes/infra/hive"), "hive"))
+k8s_resource(
+    "metastore",
+    labels="hive",
+    port_forwards=[port_forward(9083, 9083)],
+    resource_deps=["helm-release-postgresql"],
 )

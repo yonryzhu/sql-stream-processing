@@ -36,3 +36,4 @@ spec:
               memory: 2Gi
       serviceAccount: flink
       serviceAccountName: flink
+      # TODO: volume mount hive client conf
