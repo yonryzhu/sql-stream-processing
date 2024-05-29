@@ -65,6 +65,7 @@ ARG TEZ_VERSION
 COPY --from=env /opt/hadoop-$HADOOP_VERSION /opt/hadoop
 COPY --from=env /opt/apache-hive-$HIVE_VERSION-bin /opt/hive
 COPY --from=env /opt/apache-tez-$TEZ_VERSION-bin /opt/tez
+ADD https://repo1.maven.org/maven2/org/postgresql/postgresql/42.5.1/postgresql-42.5.1.jar /opt/hive/lib
 
 # Install dependencies
 RUN set -ex; \

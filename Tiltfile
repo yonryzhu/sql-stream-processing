@@ -50,7 +50,7 @@ helm_resource(
 
 k8s_yaml(namespace_inject(kustomize("deploy/kubernetes/infra/hive"), "hive"))
 k8s_resource(
-    "metastore",
+    "hive-metastore",
     labels="hive",
     port_forwards=[port_forward(9083, 9083)],
     resource_deps=["helm-release-postgresql"],
