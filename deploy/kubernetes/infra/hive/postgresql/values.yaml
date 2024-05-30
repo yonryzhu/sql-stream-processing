@@ -1,0 +1,9 @@
+global:
+  postgresql:
+    auth:
+      username: hive
+      password: password
+      database: metastore_db
+primary:
+  persistence:
+    enabled: false
