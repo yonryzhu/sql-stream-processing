@@ -7,5 +7,3 @@ global:
 primary:
   persistence:
     enabled: false
-image:
-  tag: 9.6.24

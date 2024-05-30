@@ -65,7 +65,9 @@ ARG TEZ_VERSION
 COPY --from=env /opt/hadoop-$HADOOP_VERSION /opt/hadoop
 COPY --from=env /opt/apache-hive-$HIVE_VERSION-bin /opt/hive
 COPY --from=env /opt/apache-tez-$TEZ_VERSION-bin /opt/tez
+RUN rm /opt/hive/lib/postgresql-9.4.1208.jre7.jar
 ADD https://repo1.maven.org/maven2/org/postgresql/postgresql/42.5.1/postgresql-42.5.1.jar /opt/hive/lib
+RUN chmod 644 /opt/hive/lib/*.jar
 
 # Install dependencies
 RUN set -ex; \

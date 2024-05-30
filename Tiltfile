@@ -1,8 +1,17 @@
-load("ext://cert_manager", "deploy_cert_manager")
+update_settings(k8s_upsert_timeout_secs=60)
+
 load("ext://helm_resource", "helm_resource", "helm_repo")
 load("ext://namespace", "namespace_create", "namespace_inject")
 
-deploy_cert_manager(load_to_kind=True)
+helm_repo("helm-repo-jetstack", "https://charts.jetstack.io", labels="kafka")
+helm_resource(
+    "helm-release-cert-manager",
+    release_name="cert-manager",
+    namespace="cert-manager",
+    chart="helm-repo-jetstack/cert-manager",
+    flags=["--create-namespace", "--set", "installCRDs=true"],
+    labels="kafka",
+)
 
 helm_repo("helm-repo-redpanda", "https://charts.redpanda.com", labels="kafka")
 helm_resource(
@@ -12,6 +21,7 @@ helm_resource(
     chart="helm-repo-redpanda/redpanda",
     flags=["--create-namespace", "-f", "deploy/kubernetes/infra/redpanda/values.yaml"],
     port_forwards=[port_forward(8080, 8080, name="console")],
+    resource_deps=["helm-release-cert-manager"],
     labels="kafka",
 )
 
@@ -22,6 +32,7 @@ helm_resource(
     namespace="flink",
     chart="helm-repo-flink-operator/flink-kubernetes-operator",
     flags=["--create-namespace"],
+    resource_deps=["helm-release-cert-manager"],
     labels="flink",
 )
 
